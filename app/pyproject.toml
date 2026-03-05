@@ -1,0 +1,15 @@
+[tool.black]
+# ... any other black settings you want (line-length, target-version, etc.)
+
+# - any "migrations/" directory anywhere
+# - any "__pycache__/" directory anywhere
+# - any file named "manage.py"
+# - any file named "settings.py"
+exclude = '''
+(?x)(
+  /migrations/
+|/__pycache__/
+|/manage\.py$
+|/settings\.py$
+)
+'''
