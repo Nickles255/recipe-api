@@ -30,6 +30,7 @@ from recipe.serializers import (
 RECIPES_URL = reverse("recipe:recipe-list")
 TEMP_MEDIA_DIR = tempfile.mkdtemp()
 
+
 def detail_url(recipe_id):
     """Return recipe detail URL"""
     return reverse("recipe:recipe-detail", args=[recipe_id])
@@ -382,6 +383,7 @@ class PrivateRecipeAPITests(TestCase):
 
         self.assertEqual(res.status_code, status.HTTP_200_OK)
         self.assertEqual(recipe.ingredients.count(), 0)
+
 
 @override_settings(MEDIA_ROOT=TEMP_MEDIA_DIR)
 class ImageUploadTests(TestCase):
