@@ -5,11 +5,12 @@ Tests for recipe APIs.
 from decimal import Decimal
 import tempfile
 import os
+import shutil
 
 from PIL import Image
 
 from django.contrib.auth import get_user_model
-from django.test import TestCase
+from django.test import TestCase, override_settings
 from django.urls import reverse
 
 from rest_framework import status
@@ -27,7 +28,7 @@ from recipe.serializers import (
 )
 
 RECIPES_URL = reverse("recipe:recipe-list")
-
+TEMP_MEDIA_DIR = tempfile.mkdtemp()
 
 def detail_url(recipe_id):
     """Return recipe detail URL"""
@@ -382,7 +383,7 @@ class PrivateRecipeAPITests(TestCase):
         self.assertEqual(res.status_code, status.HTTP_200_OK)
         self.assertEqual(recipe.ingredients.count(), 0)
 
-
+@override_settings(MEDIA_ROOT=TEMP_MEDIA_DIR)
 class ImageUploadTests(TestCase):
     """Test uploading images to recipes"""
 
@@ -396,7 +397,12 @@ class ImageUploadTests(TestCase):
         self.recipe = create_recipe(user=self.user)
 
     def tearDown(self):
-        self.recipe.image.delete()
+        self.recipe.image.delete(save=False)
+
+    @classmethod
+    def tearDownClass(cls):
+        super().tearDownClass()
+        shutil.rmtree(TEMP_MEDIA_DIR, ignore_errors=True)
 
     def test_upload_image(self):
         """Test uploading an image to a recipe"""
